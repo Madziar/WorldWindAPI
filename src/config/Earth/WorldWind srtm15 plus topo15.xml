@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ElevationModel version="1">
+    <DisplayName>WorldWind srtm15 plus topo15</DisplayName>
+    <NetworkRetrievalEnabled>false</NetworkRetrievalEnabled>
+    <MissingData signal="-32768.0" />
+    <DatasetName>WorldWind srtm15 plus topo15</DatasetName>
+    <DataCacheName>Earth/WorldWind srtm15 plus topo15</DataCacheName>
+    <FormatSuffix>.bil</FormatSuffix>
+    <NumLevels count="6" numEmpty="0" />
+    <Sector>
+        <SouthWest>
+            <LatLon latitude="-90.0" longitude="-180.0" units="degrees" />
+        </SouthWest>
+        <NorthEast>
+            <LatLon latitude="90.0" longitude="179.99999999999994" units="degrees" />
+        </NorthEast>
+    </Sector>
+    <TileOrigin>
+        <LatLon latitude="-90.0" longitude="-180.0" units="degrees" />
+    </TileOrigin>
+    <TileSize>
+        <Dimension height="512" width="512" />
+    </TileSize>
+    <LevelZeroTileDelta>
+        <LatLon latitude="60.0" longitude="60.0" units="degrees" />
+    </LevelZeroTileDelta>
+    <Service serviceName="Offline" />
+    <ImageFormat>application/bil32</ImageFormat>
+    <AvailableImageFormats>
+        <ImageFormat>application/bil32</ImageFormat>
+    </AvailableImageFormats>
+    <DataType byteOrder="LittleEndian" type="Float32" />
+    <ExtremeElevations max="8726.0" min="-10927.51171875" />
+</ElevationModel>
