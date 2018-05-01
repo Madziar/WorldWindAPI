@@ -3,11 +3,12 @@ package teleworx.worldwind;
 import gov.nasa.worldwind.geom.*;
 
 public class WorldWindLOS {
+	public static final double _equatorialRadius = 6378137.0;
+	public static final double _polarRadius = 6356752.3;
 
-	public double computeDistanceBetween(LatLon pathStartPoint, LatLon pathEndPoint) {
-		double equatorialRadius = 6378137.0;
-		double polarRadius = 6356752.3;
-		double pathDist = LatLon.ellipsoidalDistance(pathStartPoint, pathEndPoint, equatorialRadius, polarRadius);
+
+	public static double computeDistanceBetween(LatLon pathStartPoint, LatLon pathEndPoint) {
+		double pathDist = LatLon.ellipsoidalDistance(pathStartPoint, pathEndPoint, _equatorialRadius, _polarRadius);
 //		double pathDist = equatorialRadius * LatLon.linearDistance(pathStartPoint, pathEndPoint).getRadians();
 		if (Double.isNaN(pathDist))
 			pathDist = 0;
@@ -46,8 +47,18 @@ public class WorldWindLOS {
 	
 		LatLon pathStartPoint = elevationData[0].location;
 		LatLon pathEndPoint = elevationData[elevationData.length - 1].location;
-		double pathDist = this.computeDistanceBetween(pathStartPoint, pathEndPoint);
-//        System.out.println(pathDist);       
+		double pathDist = WorldWindLOS.computeDistanceBetween(pathStartPoint, pathEndPoint);
+//        System.out.println(pathDist);
+		if (pathDist <= 0) {
+			result.minClearance = 0;
+			result.minClearanceF1 = 0;
+			result.minClearanceF1_Dist = 0;
+			result.minClearanceF2 = 0;
+			result.minClearanceF1LocLat = pathStartPoint.latitude.getDegrees();
+			result.minClearanceF1LocLon = pathStartPoint.longitude.getDegrees();
+
+			return result;
+		}
 
 		double m = (toAntennaHt - fromAntennaHt) / pathDist;
 		double b = fromAntennaHt;
@@ -58,11 +69,11 @@ public class WorldWindLOS {
 		pathDist = Math.round(pathDist)/1000.0; // convert to km
 		for (int i = 0; i < elevationData.length; i++) {
 			LatLon thisPoint = elevationData[i].location;
-			dist = this.computeDistanceBetween(pathStartPoint, thisPoint);
+			dist = WorldWindLOS.computeDistanceBetween(pathStartPoint, thisPoint);
 			
 			// do fresnel zone calc for point.
-			d1 = this.computeDistanceBetween(pathStartPoint, thisPoint);
-			d2 = this.computeDistanceBetween(pathEndPoint, thisPoint);
+			d1 = WorldWindLOS.computeDistanceBetween(pathStartPoint, thisPoint);
+			d2 = WorldWindLOS.computeDistanceBetween(pathEndPoint, thisPoint);
 
 			// Get Curvature factor
 			D = Math.abs(midPoint - dist);
@@ -110,7 +121,7 @@ public class WorldWindLOS {
 			}
 			if (losParams.includeF2) {
 			    result.includeF2 = true;
-				clearanceF2 = Math.sqrt((losParams.fresnel2 * lambda * d1 * d2) / (d1 + d2));
+				clearanceF2 = Math.sqrt((losParams.fresnel2 * 2 * lambda * d1 * d2) / (d1 + d2));
 				clearanceF2 = Math.round(clearanceF2*100)/100.0;
 				freqClearanceF2 = (signalCenterAtHeight - clearanceF2) - elevationWithClutter ;
 				freqClearanceF2 = Math.round(freqClearanceF2*100)/100.0;
